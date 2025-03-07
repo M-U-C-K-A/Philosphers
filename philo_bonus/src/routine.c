@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 18:44:48 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 21:48:27 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,6 @@ void	print_status(t_philo *philo, char *status)
 	printf("%5lli %3d %s\n", get_timestamp() - philo->rules->start_time,
 		philo->id, status);
 	sem_post(philo->rules->write_lock);
-}
-
-void	grab_fork(t_philo *philo)
-{
-	sem_wait(philo->rules->fork);
-	print_status(philo, "has taken a fork");
 }
 
 void	think_routine(t_philo *philo, int silent)
@@ -51,6 +45,19 @@ void	think_routine(t_philo *philo, int silent)
 	usleep(time_to_think * 1000);
 }
 
+void	better_usleep(long long time, t_philo *philo)
+{
+	long long	i;
+
+	i = get_timestamp();
+	while (alive_state(philo))
+	{
+		if ((get_timestamp() - i) >= time)
+			break ;
+		usleep(1);
+	}
+}
+
 void	eating(t_philo *philo)
 {
 	sem_wait(philo->rules->fork);
@@ -67,7 +74,7 @@ void	eating(t_philo *philo)
 	philo->last_meal = get_timestamp();
 	sem_post(philo->rules->state_lock);
 	philo->time_eaten++;
-	usleep(philo->rules->time_to_eat * 1000);
+	better_usleep(philo->rules->time_to_eat, philo);
 	sem_post(philo->rules->fork);
 	sem_post(philo->rules->fork);
 }
@@ -90,7 +97,7 @@ void	philo_routine(t_philo *philo, t_rules *rules)
 			return ;
 		}
 		print_status(philo, "is sleeping");
-		usleep(philo->rules->time_to_sleep * 1000);
+		better_usleep(philo->rules->time_to_sleep, philo);
 		think_routine(philo, 1);
 	}
 	print_status(philo, "died");

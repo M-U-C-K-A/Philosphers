@@ -6,11 +6,20 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:23:14 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 10:08:06 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 21:35:19 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+long long	get_timestamp(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		write(2, "Error while getting actual time\n", 33);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
 
 int	check_rules(t_rules *rules)
 {

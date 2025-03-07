@@ -6,20 +6,11 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 16:11:46 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 21:42:08 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-
-long long	get_timestamp(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		write(2, "Error while getting actual time\n", 33);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-}
 
 void	print_status(t_philo *philo, char *status)
 {
@@ -34,21 +25,40 @@ void	print_status(t_philo *philo, char *status)
 	pthread_mutex_unlock(&philo->rules->write_lock);
 }
 
+void	better_usleep(long long time, t_philo *philo)
+{
+	long long	i;
+
+	i = get_timestamp();
+	while (alive_state(philo) && all_alive(philo))
+	{
+		if ((get_timestamp() - i) >= time)
+			break ;
+		usleep(1);
+	}
+}
+
 void	eating(t_philo *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->left_fork);
+	else
+		pthread_mutex_lock(philo->right_fork);
 	print_status(philo, "has taken a fork");
 	if (philo->rules->nb_philo == 1)
 	{
-		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
 		return ;
 	}
-	pthread_mutex_lock(philo->right_fork);
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->right_fork);
+	else
+		pthread_mutex_lock(philo->left_fork);
 	print_status(philo, "has taken a fork");
 	print_status(philo, "is eating");
 	philo->last_meal = get_timestamp();
 	philo->time_eaten++;
-	usleep(philo->rules->time_to_eat * 1000);
+	better_usleep(philo->rules->time_to_eat, philo);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 }
@@ -68,7 +78,7 @@ void	philo_routine(t_philo *philo)
 		if (philo->time_eaten == philo->rules->number_of_meal)
 			return ;
 		print_status(philo, "is sleeping");
-		usleep(philo->rules->time_to_sleep * 1000);
+		better_usleep(philo->rules->time_to_sleep, philo);
 		print_status(philo, "is thinking");
 	}
 	pthread_mutex_lock(&philo->rules->dead_lock);

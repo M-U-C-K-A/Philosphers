@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 18:42:06 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 21:46:49 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void			create_philo(t_rules *rules);
 void			philo_routine(t_philo *philo, t_rules *rules);
 void			end_process(t_rules *rules, pid_t death_check);
 long long		get_timestamp(void);
+void			better_usleep(long long time, t_philo *philo);
 void			eating(t_philo *philo);
 void			print_status(t_philo *philo, char *status);
 int				alive_state(t_philo *philo);
