@@ -1,0 +1,80 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
+/*   Updated: 2025/03/07 10:49:04 by rbardet-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
+# include <pthread.h>
+# include <sys/time.h>
+# include <semaphore.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <signal.h>
+
+# define MALLOC_ERROR "Error with a malloc\n"
+
+typedef struct t_rules
+{
+	int					nb_philo;
+	long long			time_to_die;
+	long long			time_to_eat;
+	long long			time_to_sleep;
+	int					number_of_meal;
+	int					check;
+	int					is_dead;
+	int					first_dead;
+	long long			start_time;
+	sem_t				*write_lock;
+	sem_t				*dead_lock;
+	sem_t				*state_lock;
+	sem_t				*fork;
+	struct t_philo		*philo;
+}						t_rules;
+
+typedef struct t_philo
+{
+	pthread_t			thread;
+	int					id;
+	int					time_eaten;
+	int					nb_philo;
+	long long			last_meal;
+	int					*is_dead;
+	int					*first_dead;
+	struct t_rules		*rules;
+}						t_philo;
+
+long long		ft_atol(const char *nptr);
+int				ft_isdigit(int c);
+size_t			ft_strlen(const char *s);
+int				ft_strcmp(char *s1, char *s2);
+
+t_rules			*init_rules(int argc, char **argv);
+int				check_rules(t_rules *rules);
+t_rules			*only_digit_arg(t_rules *rules, char **argv);
+t_rules			*is_valid_arg(char **argv);
+t_rules			*init_semaphore(t_rules *rules);
+int				sema_error(char *message);
+void			init_philo(t_rules *rules);
+sem_t			*init_forks(int nb_philo);
+void			free_all(t_rules *rules);
+void			create_thread(t_rules *rules);
+void			philo_routine(t_philo *philo);
+long long		get_timestamp(void);
+void			eating(t_philo *philo);
+void			print_status(t_philo *philo, char *status);
+int				all_alive(t_philo *philo);
+int				alive_state(t_philo *philo);
+
+#endif
