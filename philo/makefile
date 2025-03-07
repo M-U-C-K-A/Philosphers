@@ -6,7 +6,7 @@
 #    By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/21 22:28:21 by rbardet-          #+#    #+#              #
-#    Updated: 2025/03/06 13:08:45 by rbardet-         ###   ########.fr        #
+#    Updated: 2025/03/07 21:26:01 by rbardet-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ OBJ_DIR = obj
 OBJECTS = $(SOURCES:%.c=$(OBJ_DIR)/%.o)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g $(INCLUDE)
+CFLAGS = -Wall -Wextra -Werror -g $(INCLUDE)
 
 all: $(NAME)
 

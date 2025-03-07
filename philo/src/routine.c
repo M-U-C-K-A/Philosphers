@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 10:10:09 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:11:46 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ void	print_status(t_philo *philo, char *status)
 void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
-	print_status(philo, "has taken a left fork");
+	print_status(philo, "has taken a fork");
 	if (philo->rules->nb_philo == 1)
 	{
 		pthread_mutex_unlock(philo->left_fork);
 		return ;
 	}
 	pthread_mutex_lock(philo->right_fork);
-	print_status(philo, "has taken a right fork");
+	print_status(philo, "has taken a fork");
 	print_status(philo, "is eating");
 	philo->last_meal = get_timestamp();
 	philo->time_eaten++;

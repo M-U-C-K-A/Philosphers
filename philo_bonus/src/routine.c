@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 13:04:21 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 18:44:48 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,35 @@ void	print_status(t_philo *philo, char *status)
 		sem_post(philo->rules->write_lock);
 		return ;
 	}
-	printf("%5lli " "%3d " "%s\n", get_timestamp()
-		- philo->rules->start_time, philo->id, status);
+	printf("%5lli %3d %s\n", get_timestamp() - philo->rules->start_time,
+		philo->id, status);
 	sem_post(philo->rules->write_lock);
+}
+
+void	grab_fork(t_philo *philo)
+{
+	sem_wait(philo->rules->fork);
+	print_status(philo, "has taken a fork");
+}
+
+void	think_routine(t_philo *philo, int silent)
+{
+	long long time_to_think;
+
+	sem_wait(philo->rules->state_lock);
+	time_to_think = (philo->rules->time_to_die -
+		(get_timestamp() - philo->last_meal) -
+		philo->rules->time_to_eat) / 2;
+	sem_post(philo->rules->state_lock);
+	if (time_to_think < 0)
+		time_to_think = 0;
+	if (silent && time_to_think == 0)
+		time_to_think = 1;
+	if (time_to_think > 600)
+		time_to_think = 200;
+	if (!silent)
+		print_status(philo, "is thinking");
+	usleep(time_to_think * 1000);
 }
 
 void	eating(t_philo *philo)
@@ -37,7 +63,9 @@ void	eating(t_philo *philo)
 	sem_wait(philo->rules->fork);
 	print_status(philo, "has taken a fork");
 	print_status(philo, "is eating");
+	sem_wait(philo->rules->state_lock);
 	philo->last_meal = get_timestamp();
+	sem_post(philo->rules->state_lock);
 	philo->time_eaten++;
 	usleep(philo->rules->time_to_eat * 1000);
 	sem_post(philo->rules->fork);
@@ -57,15 +85,19 @@ void	philo_routine(t_philo *philo, t_rules *rules)
 			break ;
 		}
 		if (philo->time_eaten == philo->rules->number_of_meal)
+		{
+			free_all(rules);
 			return ;
+		}
 		print_status(philo, "is sleeping");
 		usleep(philo->rules->time_to_sleep * 1000);
-		print_status(philo, "is thinking");
+		think_routine(philo, 1);
 	}
 	print_status(philo, "died");
 	free_all(rules);
-	exit (EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
+
 
 void	end_process(t_rules *rules, pid_t death_check)
 {
