@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 04:55:37 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 18:07:50 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 22:29:24 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,17 @@ int	alive_state(t_philo *philo)
 	}
 	sem_post(philo->rules->state_lock);
 	return (1);
+}
+
+void	print_status(t_philo *philo, char *status)
+{
+	sem_wait(philo->rules->write_lock);
+	if (!alive_state(philo) && ft_strcmp(status, "died"))
+	{
+		sem_post(philo->rules->write_lock);
+		return ;
+	}
+	printf("%5lli" "%3d " "%s\n", get_timestamp() - philo->rules->start_time,
+		philo->id, status);
+	sem_post(philo->rules->write_lock);
 }

@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:23:14 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 21:35:19 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 22:03:53 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,18 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		write(2, "Wrong number of argument", 25);
+		write(2, "Wrong number of argument\n", 26);
 		return (1);
 	}
 	rules = init_rules(argc, argv);
 	rules->is_dead = 0;
 	rules->first_dead = 0;
 	if (rules->check != 0)
-		return (1);
+		return (free(rules), 1);
 	if (check_rules(rules) == 0)
 	{
-		write(2, "At least one rule is not valid", 30);
+		free(rules);
+		write(2, "At least one rule is not valid\n", 32);
 		return (1);
 	}
 	fork = init_forks(rules->nb_philo);

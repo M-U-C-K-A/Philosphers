@@ -6,11 +6,24 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 11:49:42 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 18:07:48 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 22:21:20 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_bonus.h"
+
+void	better_usleep(long long time, t_philo *philo)
+{
+	long long	i;
+
+	i = get_timestamp();
+	while (alive_state(philo))
+	{
+		if ((get_timestamp() - i) >= time)
+			break ;
+		usleep(1);
+	}
+}
 
 long long	get_timestamp(void)
 {
@@ -58,13 +71,16 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	rules = init_rules(argc, argv);
-	rules->wait_philo = malloc(sizeof(pid_t) * (rules->nb_philo));
+	if (rules->nb_philo > 0)
+		rules->wait_philo = malloc(sizeof(pid_t) * (rules->nb_philo));
 	if (rules->check != 0)
 		return (1);
 	if (check_rules(rules) == 0)
 	{
+		if (rules->wait_philo)
+			free(rules->wait_philo);
 		write(2, "At least one rule is not valid", 30);
-		return (1);
+		return (free(rules), 1);
 	}
 	init_philo(rules);
 	if (!rules)

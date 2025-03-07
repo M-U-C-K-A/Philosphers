@@ -6,33 +6,20 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 21:48:27 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 22:26:20 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_bonus.h"
 
-void	print_status(t_philo *philo, char *status)
-{
-	sem_wait(philo->rules->write_lock);
-	if (!alive_state(philo) && ft_strcmp(status, "died"))
-	{
-		sem_post(philo->rules->write_lock);
-		return ;
-	}
-	printf("%5lli %3d %s\n", get_timestamp() - philo->rules->start_time,
-		philo->id, status);
-	sem_post(philo->rules->write_lock);
-}
-
 void	think_routine(t_philo *philo, int silent)
 {
-	long long time_to_think;
+	long long	time_to_think;
 
 	sem_wait(philo->rules->state_lock);
-	time_to_think = (philo->rules->time_to_die -
-		(get_timestamp() - philo->last_meal) -
-		philo->rules->time_to_eat) / 2;
+	time_to_think = (philo->rules->time_to_die
+			- (get_timestamp() - philo->last_meal)
+			- philo->rules->time_to_eat) / 2;
 	sem_post(philo->rules->state_lock);
 	if (time_to_think < 0)
 		time_to_think = 0;
@@ -43,19 +30,6 @@ void	think_routine(t_philo *philo, int silent)
 	if (!silent)
 		print_status(philo, "is thinking");
 	usleep(time_to_think * 1000);
-}
-
-void	better_usleep(long long time, t_philo *philo)
-{
-	long long	i;
-
-	i = get_timestamp();
-	while (alive_state(philo))
-	{
-		if ((get_timestamp() - i) >= time)
-			break ;
-		usleep(1);
-	}
 }
 
 void	eating(t_philo *philo)
@@ -104,7 +78,6 @@ void	philo_routine(t_philo *philo, t_rules *rules)
 	free_all(rules);
 	exit(EXIT_SUCCESS);
 }
-
 
 void	end_process(t_rules *rules, pid_t death_check)
 {

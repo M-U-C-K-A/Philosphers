@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 21:46:49 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 22:19:02 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 # define MALLOC_ERROR "Error with a malloc\n"
 
-typedef struct t_rules
+typedef struct s_rules
 {
 	int					nb_philo;
 	long long			time_to_die;
@@ -40,17 +40,17 @@ typedef struct t_rules
 	sem_t				*state_lock;
 	sem_t				*fork;
 	pid_t				*wait_philo;
-	struct t_philo		*philo;
+	struct s_philo		*philo;
 }						t_rules;
 
-typedef struct t_philo
+typedef struct s_philo
 {
 	pthread_t			thread;
 	int					id;
 	int					time_eaten;
 	int					nb_philo;
 	long long			last_meal;
-	struct t_rules		*rules;
+	struct s_rules		*rules;
 }						t_philo;
 
 long long		ft_atol(const char *nptr);
