@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 10:49:04 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:04:20 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <sys/time.h>
 # include <semaphore.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 # include <sys/stat.h>
 # include <signal.h>
 
@@ -33,13 +34,12 @@ typedef struct t_rules
 	long long			time_to_sleep;
 	int					number_of_meal;
 	int					check;
-	int					is_dead;
-	int					first_dead;
 	long long			start_time;
 	sem_t				*write_lock;
 	sem_t				*dead_lock;
 	sem_t				*state_lock;
 	sem_t				*fork;
+	pid_t				*wait_philo;
 	struct t_philo		*philo;
 }						t_rules;
 
@@ -50,8 +50,6 @@ typedef struct t_philo
 	int					time_eaten;
 	int					nb_philo;
 	long long			last_meal;
-	int					*is_dead;
-	int					*first_dead;
 	struct t_rules		*rules;
 }						t_philo;
 
@@ -65,16 +63,17 @@ int				check_rules(t_rules *rules);
 t_rules			*only_digit_arg(t_rules *rules, char **argv);
 t_rules			*is_valid_arg(char **argv);
 t_rules			*init_semaphore(t_rules *rules);
-int				sema_error(char *message);
+int				exit_print(char *message);
 void			init_philo(t_rules *rules);
 sem_t			*init_forks(int nb_philo);
 void			free_all(t_rules *rules);
-void			create_thread(t_rules *rules);
-void			philo_routine(t_philo *philo);
+void			create_philo(t_rules *rules);
+void			philo_routine(t_philo *philo, t_rules *rules);
+void			end_process(t_rules *rules, pid_t death_check);
 long long		get_timestamp(void);
 void			eating(t_philo *philo);
 void			print_status(t_philo *philo, char *status);
-int				all_alive(t_philo *philo);
 int				alive_state(t_philo *philo);
+int				exit_print(char *message);
 
 #endif

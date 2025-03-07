@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:30:23 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 10:49:12 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:04:25 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ t_rules	*init_rules(int argc, char **argv)
 	return (rules);
 }
 
-int	sema_error(char *message)
+int	exit_print(char *message)
 {
 	printf("%s\n", message);
 	return (EXIT_FAILURE);
@@ -80,7 +80,7 @@ t_rules	*init_semaphore(t_rules *rules)
 	rules->fork->__align = rules->nb_philo;
 	if (rules->fork == SEM_FAILED || rules->state_lock == SEM_FAILED
 		|| rules->dead_lock == SEM_FAILED || rules->write_lock == SEM_FAILED)
-		exit (sema_error("Error while opening a semaphore."));
+		exit (exit_print("Error while opening a semaphore."));
 	return (rules);
 }
 
@@ -92,8 +92,6 @@ void	init_philo(t_rules *rules)
 	rules = init_semaphore(rules);
 	while (i < rules->nb_philo)
 	{
-		rules->philo[i].is_dead = &rules->is_dead;
-		rules->philo[i].first_dead = &rules->first_dead;
 		rules->philo[i].id = i + 1;
 		rules->philo[i].time_eaten = 0;
 		rules->philo[i].last_meal = get_timestamp();
