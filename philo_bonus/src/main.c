@@ -6,22 +6,22 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 11:49:42 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 22:21:20 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 14:27:35 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_bonus.h"
 
-void	better_usleep(long long time, t_philo *philo)
+void	better_usleep(long long time, t_philo *philo, t_rules *rules)
 {
 	long long	i;
 
 	i = get_timestamp();
-	while (alive_state(philo))
+	while (alive_state(philo, rules))
 	{
 		if ((get_timestamp() - i) >= time)
 			break ;
-		usleep(1);
+		usleep(50);
 	}
 }
 
@@ -67,19 +67,19 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		write(2, "Wrong number of argument", 25);
+		write(2, "Wrong number of argument\n", 25);
 		return (1);
 	}
 	rules = init_rules(argc, argv);
+	if (rules->check != 0)
+		return (free(rules), 1);
 	if (rules->nb_philo > 0)
 		rules->wait_philo = malloc(sizeof(pid_t) * (rules->nb_philo));
-	if (rules->check != 0)
-		return (1);
 	if (check_rules(rules) == 0)
 	{
 		if (rules->wait_philo)
 			free(rules->wait_philo);
-		write(2, "At least one rule is not valid", 30);
+		write(2, "At least one rule is not valid\n", 31);
 		return (free(rules), 1);
 	}
 	init_philo(rules);

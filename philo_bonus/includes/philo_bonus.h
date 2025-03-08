@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 22:19:02 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 15:37:26 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <signal.h>
 
 # define MALLOC_ERROR "Error with a malloc\n"
+# define FULL 3
 
 typedef struct s_rules
 {
@@ -71,10 +72,11 @@ void			create_philo(t_rules *rules);
 void			philo_routine(t_philo *philo, t_rules *rules);
 void			end_process(t_rules *rules, pid_t death_check);
 long long		get_timestamp(void);
-void			better_usleep(long long time, t_philo *philo);
-void			eating(t_philo *philo);
-void			print_status(t_philo *philo, char *status);
-int				alive_state(t_philo *philo);
+void			better_usleep(long long time, t_philo *philo, t_rules *rules);
+void			eating(t_philo *philo, t_rules *rules);
+void			print_status(t_philo *philo, char *status, t_rules *rules);
+int				alive_state(t_philo *philo, t_rules *rules);
 int				exit_print(char *message);
+void			wait_till_end(t_rules *rules);
 
 #endif

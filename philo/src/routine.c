@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 03:12:39 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 22:18:55 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 16:11:46 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	print_status(t_philo *philo, char *status)
 		pthread_mutex_unlock(&philo->rules->write_lock);
 		return ;
 	}
-	printf("%5lli " "%3d " "%s\n", get_timestamp()
+	printf("%6lli " "%4d " "%s\n", get_timestamp()
 		- philo->rules->start_time, philo->id, status);
 	pthread_mutex_unlock(&philo->rules->write_lock);
 }
@@ -34,7 +34,7 @@ void	better_usleep(long long time, t_philo *philo)
 	{
 		if ((get_timestamp() - i) >= time)
 			break ;
-		usleep(1);
+		usleep(50);
 	}
 }
 
@@ -80,16 +80,9 @@ void	philo_routine(t_philo *philo)
 		print_status(philo, "is sleeping");
 		better_usleep(philo->rules->time_to_sleep, philo);
 		print_status(philo, "is thinking");
+		usleep(500);
 	}
-	pthread_mutex_lock(&philo->rules->dead_lock);
-	if (*philo->first_dead == 1)
-	{
-		pthread_mutex_unlock(&philo->rules->dead_lock);
-		return ;
-	}
-	*philo->first_dead = 1;
-	pthread_mutex_unlock(&philo->rules->dead_lock);
-	print_status(philo, "died");
+	end_of_prog(philo);
 }
 
 void	create_thread(pthread_mutex_t **fork, t_rules *rules)
@@ -104,7 +97,7 @@ void	create_thread(pthread_mutex_t **fork, t_rules *rules)
 		{
 			free_all(fork, rules);
 			write(2, "Error while initing philo thread\n", 34);
-			exit (EXIT_FAILURE);
+			return ;
 		}
 		i++;
 	}

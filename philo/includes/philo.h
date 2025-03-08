@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 04:21:04 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 22:18:53 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 16:11:07 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,7 @@ void			print_status(t_philo *philo, char *status);
 void			better_usleep(long long time, t_philo *philo);
 int				all_alive(t_philo *philo);
 int				alive_state(t_philo *philo);
+t_rules			*get_rules(int argc, char **argv);
+int				end_of_prog(t_philo *philo);
 
 #endif

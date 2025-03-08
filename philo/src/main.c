@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/06 09:23:14 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 22:03:53 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 16:30:31 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,27 @@ void	free_all(pthread_mutex_t **fork, t_rules *rules)
 	free(fork);
 }
 
+t_rules	*get_rules(int argc, char **argv)
+{
+	t_rules	*rules;
+
+	rules = init_rules(argc, argv);
+	rules->is_dead = 0;
+	rules->first_dead = 0;
+	if (rules->check != 0)
+	{
+		free(rules);
+		return (NULL);
+	}
+	if (check_rules(rules) == 0)
+	{
+		free(rules);
+		write(2, "At least one rule is not valid\n", 31);
+		return (NULL);
+	}
+	return (rules);
+}
+
 int	main(int argc, char **argv)
 {
 	t_rules				*rules;
@@ -62,19 +83,15 @@ int	main(int argc, char **argv)
 		write(2, "Wrong number of argument\n", 26);
 		return (1);
 	}
-	rules = init_rules(argc, argv);
-	rules->is_dead = 0;
-	rules->first_dead = 0;
-	if (rules->check != 0)
-		return (free(rules), 1);
-	if (check_rules(rules) == 0)
-	{
-		free(rules);
-		write(2, "At least one rule is not valid\n", 32);
+	rules = get_rules(argc, argv);
+	if (!rules)
 		return (1);
-	}
 	fork = init_forks(rules->nb_philo);
+	if (!fork)
+		return (1);
 	init_philo(fork, rules);
+	if (!rules->philo)
+		return (1);
 	create_thread(fork, rules);
 	free_all(fork, rules);
 	return (0);

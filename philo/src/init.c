@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:30:23 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/06 15:17:03 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 15:59:47 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,14 @@ t_rules	*init_mutex(t_rules *rules)
 	if (!rules->philo)
 	{
 		write(2, MALLOC_ERROR, ft_strlen(MALLOC_ERROR));
-		exit (EXIT_FAILURE);
+		return (NULL);
 	}
 	if (pthread_mutex_init(&rules->write_lock, NULL) != 0
 		|| pthread_mutex_init(&rules->dead_lock, NULL) != 0
 		|| pthread_mutex_init(&rules->state_lock, NULL) != 0)
 	{
 		write(2, "Error while initing a mutex\n", 29);
-		exit (EXIT_FAILURE);
+		return (NULL);
 	}
 	return (rules);
 }
@@ -80,6 +80,8 @@ void	init_philo(pthread_mutex_t **fork, t_rules *rules)
 
 	i = 0;
 	rules = init_mutex(rules);
+	if (!rules->philo)
+		return ;
 	while (i < rules->nb_philo)
 	{
 		rules->philo[i].is_dead = &rules->is_dead;
@@ -115,7 +117,7 @@ pthread_mutex_t	**init_forks(int nb_philo)
 				i--;
 			}
 			write(2, "Error while initing a mutex\n", 29);
-			exit (EXIT_FAILURE);
+			return (NULL);
 		}
 		i++;
 	}

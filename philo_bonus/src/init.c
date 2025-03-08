@@ -6,7 +6,7 @@
 /*   By: rbardet- <rbardet-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:30:23 by rbardet-          #+#    #+#             */
-/*   Updated: 2025/03/07 18:42:14 by rbardet-         ###   ########.fr       */
+/*   Updated: 2025/03/08 16:09:25 by rbardet-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,14 @@ t_rules	*init_semaphore(t_rules *rules)
 		write(2, MALLOC_ERROR, ft_strlen(MALLOC_ERROR));
 		exit (EXIT_FAILURE);
 	}
+	sem_unlink("/write");
 	rules->write_lock = sem_open("/write", O_CREAT, 0755, 1);
-	rules->write_lock->__align = 1;
+	sem_unlink("/dead");
 	rules->dead_lock = sem_open("/dead", O_CREAT, 0755, 1);
-	rules->dead_lock->__align = 1;
+	sem_unlink("/state");
 	rules->state_lock = sem_open("/state", O_CREAT, 0755, 1);
-	rules->state_lock->__align = 1;
+	sem_unlink("/fork");
 	rules->fork = sem_open("/fork", O_CREAT, 0755, rules->nb_philo);
-	rules->fork->__align = rules->nb_philo;
 	if (rules->fork == SEM_FAILED || rules->state_lock == SEM_FAILED
 		|| rules->dead_lock == SEM_FAILED || rules->write_lock == SEM_FAILED)
 		exit (exit_print("Error while opening a semaphore."));
